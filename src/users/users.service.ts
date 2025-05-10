@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import userRoleEnum from './enums/userRoleEnum';
+import { Product } from 'src/products/entities/product.entity';
 
 @Injectable()
 export class UsersService {
@@ -46,7 +47,7 @@ export class UsersService {
     return await query.getMany();
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<User> {
     const user = await this.userRepository.findOneBy({ id });
 
     if (!user) throw new NotFoundException(`user '${id}' is not found ...`);
@@ -87,5 +88,37 @@ export class UsersService {
 
   }
 
+  async addProductToBasket(userId: number, product: Product): Promise<User> {
+    const user = await this.userRepository.findOne({where: {id: userId}, relations: ['basket_items']});
+
+    if (!user) {
+      throw new NotFoundException('user not found.');
+    }
+
+    user.basket_items.push(product);
+  
+    return await this.userRepository.save(user)
+  }
+
+  async removeProductFromBasket(userId: number, product: { id: number }): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['basket_items']
+    });
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    const productIndex = user.basket_items.findIndex(item => item.id === product.id);
+
+    if (productIndex === -1) {
+      throw new NotFoundException('product not found in the basket.')
+    }
+
+    user.basket_items.splice(productIndex, 1);
+
+    await this.userRepository.save(user);
+  }
 
 }

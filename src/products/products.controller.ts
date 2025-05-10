@@ -73,4 +73,31 @@ export class ProductsController {
   // remove(@Param('id') id: string) {
   //   return this.productsService.remove(+id);
   // }
+
+  @Post('add-item-to-basket')
+  async addItemToBasket(@Body() bookmarkProductDto: BookmarkProductDto, @Res() res: Response) {
+    const addToBasket = await this.productsService.addItemToBasket(
+      bookmarkProductDto.user_id,
+      bookmarkProductDto.product_id
+    );
+
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      data: addToBasket,
+      message: "The product was successfully added to the basket.",
+    });
+  }
+
+  @Delete('remove-item-from-basket')
+  async removeItemFromBasket(@Body() bookmarkProductDto: BookmarkProductDto, @Res() res: Response) {
+      await this.productsService.removeItemFromBasket(
+      bookmarkProductDto.user_id,
+      bookmarkProductDto.product_id
+    );
+
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: "The product was successfully removed from the basket.",
+    });
+  }
 }

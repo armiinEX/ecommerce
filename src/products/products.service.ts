@@ -98,6 +98,29 @@ export class ProductsService {
         product
       });
       return await this.bookmarkProductRepository.save(newBookmark);
-    }    
+    }
   }
+
+  async addItemToBasket(userId: number, productId: number) {
+    const product = await this.productRepository.findOne({ where: { id: productId } });
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return await this.usersService.addProductToBasket(userId, product);
+  }
+
+  async removeItemFromBasket(userId: number, productId: number): Promise<void> {
+    const product = await this.productRepository.findOne({ where: { id: productId } });
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    await this.usersService.removeProductFromBasket(userId, product);
+  }
+
+  
+
 }

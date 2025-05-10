@@ -9,6 +9,7 @@ import { AddressModule } from './address/address.module';
 import { TicketsModule } from './tickets/tickets.module';
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
 
@@ -35,6 +36,7 @@ import { CategoriesModule } from './categories/categories.module';
     TicketsModule,
     ProductsModule,
     CategoriesModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

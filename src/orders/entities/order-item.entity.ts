@@ -10,35 +10,21 @@ import {
 import { User } from "../../users/entities/user.entity";
 import { Address } from "../../address/entities/address.entity";
 import { OrderStatus } from '../enums/order-status.enums';
+import { Product } from '../../products/entities/product.entity';
+import { Order } from './order.entity';
 
-@Entity("orders")
-export class Order {
+@Entity("order_items")
+export class OrderItems {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(type => User, (user) => user.orders)
-    user: User;
+    @ManyToOne(() => Order, (order) => order.items)
+    order: Order;
 
-    @Column({ type: "enum", enum:OrderStatus, default: OrderStatus.PENDING })
-    status: OrderStatus;
+    @ManyToOne(() => Product)
+    product: Product;
 
-    @Column({ type: "timestamp", nullable: true })
-    payed_time: Date;
-
-    @ManyToOne(() => Address, (address) => address.orders)
-    @JoinColumn({ name: "address_id" })
-    address: Address;
-
-    @Column({ type: 'bigint' })
-    total_price: number;
-
-    @Column({ type: 'varchar', nullable: true })
-    discount_code: string;
-
-    @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-    createdAT: Date;
-
-    @UpdateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
-    updatedAT: Date;
+    // @Column({ type: "int" })
+    // quantity: number;
 
 }
